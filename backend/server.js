@@ -43,10 +43,10 @@ mongoose
 // ─────────────────────────────────────────
 
 const jobRoutes  = require("./routes/jobs");
-//const blogRoutes = require("./routes/blogs");
+const blogRoutes = require("./routes/blogs");
 
 app.use("/api/jobs",  jobRoutes);   // All job routes → /api/jobs
-//app.use("/api/blogs", blogRoutes);  // All blog routes → /api/blogs
+app.use("/api/blogs", blogRoutes);  // All blog routes → /api/blogs
 
 // ─────────────────────────────────────────
 // ROOT ROUTE — just to test server is alive
