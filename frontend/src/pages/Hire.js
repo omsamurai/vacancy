@@ -1,9 +1,6 @@
 import { useState } from "react";
 
 function Hire() {
-
-  // All form fields stored in one state object
-  // Each key matches the input's name attribute
   const [form, setForm] = useState({
     title: "",
     company: "",
@@ -14,12 +11,9 @@ function Hire() {
     description: "",
   });
 
-  // Track if form was submitted successfully
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading]     = useState(false);
 
-  // One function handles ALL input changes
-  // e.target.name tells us which field changed
-  // e.target.value is the new value
   function handleChange(e) {
     setForm(prev => ({
       ...prev,
@@ -27,25 +21,33 @@ function Hire() {
     }));
   }
 
-  // Handle form submission
-  // Right now just logs to console
-  // Later we'll send this to: POST http://localhost:5000/api/jobs
-  function handleSubmit(e) {
-    e.preventDefault(); // Stop page from refreshing
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
 
-    console.log("Job Posted:", form);
-    // Future backend call will look like this:
-    // fetch("http://localhost:5000/api/jobs", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(form),
-    // });
+    try {
+      // Send form data to real backend API
+      const res = await fetch("http://localhost:5000/api/jobs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    setSubmitted(true); // Show success screen
+      const data = await res.json();
+
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        alert("Something went wrong: " + data.message);
+      }
+    } catch (error) {
+      alert("Could not connect to server. Make sure backend is running.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   // ── SUCCESS SCREEN ──
-  // Show this after form is submitted
   if (submitted) {
     return (
       <div style={styles.section}>
@@ -59,7 +61,10 @@ function Hire() {
             <button
               onClick={() => {
                 setSubmitted(false);
-                setForm({ title: "", company: "", location: "", type: "Full-time", salary: "", email: "", description: "" });
+                setForm({
+                  title: "", company: "", location: "",
+                  type: "Full-time", salary: "", email: "", description: "",
+                });
               }}
               style={styles.submitBtn}
             >
@@ -83,7 +88,6 @@ function Hire() {
 
         <form onSubmit={handleSubmit}>
 
-          {/* ROW 1 — Job Title + Company */}
           <div style={styles.row}>
             <div style={styles.group}>
               <label style={styles.label}>Job Title *</label>
@@ -109,7 +113,6 @@ function Hire() {
             </div>
           </div>
 
-          {/* ROW 2 — Location + Job Type */}
           <div style={styles.row}>
             <div style={styles.group}>
               <label style={styles.label}>Location</label>
@@ -137,7 +140,6 @@ function Hire() {
             </div>
           </div>
 
-          {/* ROW 3 — Salary + Email */}
           <div style={styles.row}>
             <div style={styles.group}>
               <label style={styles.label}>Salary Range</label>
@@ -163,7 +165,6 @@ function Hire() {
             </div>
           </div>
 
-          {/* Job Description */}
           <div style={styles.group}>
             <label style={styles.label}>Job Description *</label>
             <textarea
@@ -176,8 +177,12 @@ function Hire() {
             />
           </div>
 
-          <button type="submit" style={styles.submitBtn}>
-            🚀 Post Job Now
+          <button
+            type="submit"
+            style={styles.submitBtn}
+            disabled={loading}
+          >
+            {loading ? "Posting..." : "🚀 Post Job Now"}
           </button>
 
         </form>
@@ -186,9 +191,6 @@ function Hire() {
   );
 }
 
-// ─────────────────────────────────────────
-// STYLES
-// ─────────────────────────────────────────
 const styles = {
   section: {
     padding: "60px 40px",
@@ -261,8 +263,6 @@ const styles = {
     cursor: "pointer",
     marginTop: "8px",
   },
-
-  // Success screen
   successBox: {
     textAlign: "center",
     padding: "20px 0",

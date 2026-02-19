@@ -1,25 +1,37 @@
-import { useState } from "react";
-import { MOCK_BLOGS } from "../data/mockData";
+import { useState, useEffect } from "react";
 
-// Category emoji map for visual variety
 const CATEGORY_EMOJI = {
   "Career Tips": "💡",
   "Remote Work": "🏡",
-  "Skills": "🚀",
+  "Skills":      "🚀",
 };
 
 function Blog() {
-
-  // null means show the list
-  // if a blog object is selected, show the full article
+  const [blogs, setBlogs]     = useState([]);
   const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch blogs from backend when page loads
+  useEffect(() => {
+    async function fetchBlogs() {
+      try {
+        const res  = await fetch("http://localhost:5000/api/blogs");
+        const data = await res.json();
+        setBlogs(data.blogs);
+      } catch (error) {
+        console.log("Error fetching blogs:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBlogs();
+  }, []);
 
   // ── FULL ARTICLE VIEW ──
   if (selected) {
     return (
       <div style={styles.articleSection}>
 
-        {/* Back button returns to blog list */}
         <button
           onClick={() => setSelected(null)}
           style={styles.backBtn}
@@ -33,7 +45,6 @@ function Blog() {
 
         <div style={styles.articleMeta}>
           ✍️ {selected.author} &nbsp;·&nbsp;
-          📅 {selected.date} &nbsp;·&nbsp;
           ⏱ {selected.readTime} read
         </div>
 
@@ -52,16 +63,21 @@ function Blog() {
         Tips, insights, and guides for job seekers and employers
       </p>
 
-      {/* Blog Cards Grid */}
-      <div style={styles.grid}>
-        {MOCK_BLOGS.map(blog => (
-          <BlogCard
-            key={blog.id}
-            blog={blog}
-            onClick={() => setSelected(blog)}
-          />
-        ))}
-      </div>
+      {loading && (
+        <p style={{ color: "#888" }}>Loading blogs...</p>
+      )}
+
+      {!loading && (
+        <div style={styles.grid}>
+          {blogs.map(blog => (
+            <BlogCard
+              key={blog._id}
+              blog={blog}
+              onClick={() => setSelected(blog)}
+            />
+          ))}
+        </div>
+      )}
 
     </div>
   );
@@ -69,19 +85,15 @@ function Blog() {
 
 // ─────────────────────────────────────────
 // BLOG CARD COMPONENT
-// Reusable card for each blog post
 // ─────────────────────────────────────────
 function BlogCard({ blog, onClick }) {
   return (
     <div style={styles.card} onClick={onClick}>
-
-      {/* Colored banner with emoji */}
       <div style={styles.banner}>
         <span style={styles.bannerEmoji}>
           {CATEGORY_EMOJI[blog.category] || "📝"}
         </span>
       </div>
-
       <div style={styles.cardBody}>
         <span style={styles.category}>{blog.category}</span>
         <h3 style={styles.cardTitle}>{blog.title}</h3>
@@ -91,16 +103,11 @@ function BlogCard({ blog, onClick }) {
           <span>⏱ {blog.readTime} read</span>
         </div>
       </div>
-
     </div>
   );
 }
 
-// ─────────────────────────────────────────
-// STYLES
-// ─────────────────────────────────────────
 const styles = {
-  // Blog list
   section: {
     padding: "60px 40px",
     maxWidth: "1100px",
@@ -123,15 +130,12 @@ const styles = {
     gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
     gap: "24px",
   },
-
-  // Blog card
   card: {
     background: "#ffffff",
     borderRadius: "16px",
     overflow: "hidden",
     border: "1px solid #e8e4de",
     cursor: "pointer",
-    transition: "transform 0.2s",
   },
   banner: {
     height: "160px",
@@ -172,8 +176,6 @@ const styles = {
     fontSize: "12px",
     color: "#aaaaaa",
   },
-
-  // Full article view
   articleSection: {
     padding: "60px 40px",
     maxWidth: "720px",

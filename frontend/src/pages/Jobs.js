@@ -1,18 +1,34 @@
-import { useState } from "react";
-import { MOCK_JOBS } from "../data/mockData";
+import { useState, useEffect } from "react";
 import JobCard from "../components/JobCard";
 
 function Jobs() {
-
-  const [filter, setFilter] = useState("All");
-  const [search, setSearch] = useState("");
+  const [jobs, setJobs]       = useState([]);
+  const [filter, setFilter]   = useState("All");
+  const [search, setSearch]   = useState("");
+  const [loading, setLoading] = useState(true);
 
   const filterTypes = ["All", "Full-time", "Contract", "Part-time"];
 
-  // FILTER LOGIC
-  // 1. Filter by job type (Full-time, Contract, Part-time)
-  // 2. Filter by search text (title, company, or tags)
-  const filteredJobs = MOCK_JOBS.filter(job => {
+  // Fetch jobs from backend when page loads
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  async function fetchJobs() {
+    try {
+      setLoading(true);
+      const res  = await fetch("http://localhost:5000/api/jobs");
+      const data = await res.json();
+      setJobs(data.jobs);
+    } catch (error) {
+      console.log("Error fetching jobs:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Filter jobs on frontend after fetching
+  const filteredJobs = jobs.filter(job => {
     const matchType = filter === "All" || job.type === filter;
     const matchSearch =
       job.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -26,7 +42,7 @@ function Jobs() {
 
       <h2 style={styles.title}>Browse Jobs</h2>
       <p style={styles.sub}>
-        Explore {MOCK_JOBS.length} open positions across various industries
+        Explore {jobs.length} open positions across various industries
       </p>
 
       {/* SEARCH INPUT */}
@@ -50,21 +66,25 @@ function Jobs() {
         ))}
       </div>
 
+      {/* LOADING STATE */}
+      {loading && (
+        <p style={styles.loading}>Loading jobs...</p>
+      )}
+
       {/* JOB CARDS GRID */}
-      <div style={styles.grid}>
-        {filteredJobs.length === 0
-          ? <p style={styles.noResults}>No jobs found. Try a different search.</p>
-          : filteredJobs.map(job => <JobCard key={job.id} job={job} />)
-        }
-      </div>
+      {!loading && (
+        <div style={styles.grid}>
+          {filteredJobs.length === 0
+            ? <p style={styles.noResults}>No jobs found. Try a different search.</p>
+            : filteredJobs.map(job => <JobCard key={job._id} job={job} />)
+          }
+        </div>
+      )}
 
     </div>
   );
 }
 
-// ─────────────────────────────────────────
-// STYLES
-// ─────────────────────────────────────────
 const styles = {
   section: {
     padding: "60px 40px",
@@ -114,6 +134,10 @@ const styles = {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
     gap: "20px",
+  },
+  loading: {
+    color: "#888888",
+    fontSize: "15px",
   },
   noResults: {
     color: "#888888",
