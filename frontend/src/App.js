@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Jobs from "./pages/Jobs";
 import Hire from "./pages/Hire";
+import Blog from "./pages/Blog";
 
 function App() {
   const [page, setPage] = useState("Home");
@@ -12,6 +13,7 @@ function App() {
       case "Home": return <Home setPage={setPage} />;
       case "Jobs": return <Jobs />;
       case "Hire": return <Hire />;
+      case "Blog": return <Blog />;
       default:     return <Home setPage={setPage} />;
     }
   }

@@ -1,6 +1,48 @@
 // This is fake data to test our UI
 // Later we'll replace this with real data from our Node.js API
 // via: fetch("http://localhost:5000/api/jobs")
+export const MOCK_BLOGS = [
+  {
+    id: 1,
+    title: "How to Nail Your Tech Interview in 2025",
+    author: "Priya Sharma",
+    date: "Feb 10, 2025",
+    readTime: "5 min",
+    category: "Career Tips",
+    excerpt: "Preparing for a technical interview can be daunting. Here is a battle-tested strategy to help you land your dream job.",
+    content: "Start by understanding the job description thoroughly. Research the company, its tech stack, and recent news. Practice coding problems on platforms like LeetCode daily. Focus on data structures, algorithms, and system design. Do at least 3 mock interviews with friends or online tools. On the day, communicate your thought process clearly — interviewers care how you think, not just the answer.",
+  },
+  {
+    id: 2,
+    title: "Remote Work: Tools Every Developer Needs",
+    author: "Arjun Mehta",
+    date: "Feb 5, 2025",
+    readTime: "4 min",
+    category: "Remote Work",
+    excerpt: "Working from home is the new norm. These tools will keep you productive and connected with your team.",
+    content: "Use Slack or Discord for team communication. Notion or Confluence for documentation. GitHub for version control. Figma for design collaboration. Zoom or Google Meet for video calls. A good noise-cancelling headset and a stable internet connection are non-negotiable. Set up a dedicated workspace and stick to a routine to maintain work-life balance.",
+  },
+  {
+    id: 3,
+    title: "Top 10 In-Demand Skills for 2025",
+    author: "Sneha Rao",
+    date: "Jan 28, 2025",
+    readTime: "6 min",
+    category: "Skills",
+    excerpt: "The job market evolves fast. Stay ahead of the curve with these highly sought-after skills employers want right now.",
+    content: "1. AI and Machine Learning basics. 2. Cloud computing (AWS, Azure, GCP). 3. React or Next.js for frontend. 4. Node.js or Python for backend. 5. DevOps and CI/CD pipelines. 6. Cybersecurity fundamentals. 7. Data analysis with SQL and Python. 8. Communication and remote collaboration. 9. Product thinking. 10. Prompt engineering for AI tools.",
+  },
+  {
+    id: 4,
+    title: "Building Your Portfolio as a Fresher",
+    author: "Karan Patel",
+    date: "Jan 20, 2025",
+    readTime: "7 min",
+    category: "Career Tips",
+    excerpt: "No experience? No problem. Here is how to build a compelling portfolio that gets you noticed as a beginner.",
+    content: "Start with 3 solid projects that solve real problems. Host them on GitHub and deploy them live using Vercel or Netlify. Write a clean README for each project explaining what it does and how to run it. Build a personal portfolio website showcasing your projects, skills, and contact info. Contribute to open source even in small ways. Consistency beats perfection — ship projects regularly.",
+  },
+];
 
 export const MOCK_JOBS = [
   {
