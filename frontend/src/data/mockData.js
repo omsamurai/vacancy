@@ -1,0 +1,66 @@
+// This is fake data to test our UI
+// Later we'll replace this with real data from our Node.js API
+// via: fetch("http://localhost:5000/api/jobs")
+
+export const MOCK_JOBS = [
+  {
+    id: 1,
+    title: "Frontend Developer",
+    company: "TechCorp",
+    location: "Remote",
+    type: "Full-time",
+    salary: "$80k–$100k",
+    tags: ["React", "CSS", "JavaScript"],
+    posted: "2 days ago",
+  },
+  {
+    id: 2,
+    title: "UI/UX Designer",
+    company: "DesignHub",
+    location: "Mumbai",
+    type: "Contract",
+    salary: "$60k–$75k",
+    tags: ["Figma", "Sketch", "Prototyping"],
+    posted: "5 days ago",
+  },
+  {
+    id: 3,
+    title: "Node.js Backend Dev",
+    company: "StartupX",
+    location: "Bangalore",
+    type: "Full-time",
+    salary: "$90k–$120k",
+    tags: ["Node", "MongoDB", "REST API"],
+    posted: "1 week ago",
+  },
+  {
+    id: 4,
+    title: "Product Manager",
+    company: "ScaleUp Inc",
+    location: "Delhi",
+    type: "Full-time",
+    salary: "$100k–$130k",
+    tags: ["Agile", "Roadmap", "Analytics"],
+    posted: "3 days ago",
+  },
+  {
+    id: 5,
+    title: "Data Analyst",
+    company: "DataViz Co",
+    location: "Remote",
+    type: "Part-time",
+    salary: "$50k–$65k",
+    tags: ["Python", "SQL", "Tableau"],
+    posted: "Today",
+  },
+  {
+    id: 6,
+    title: "DevOps Engineer",
+    company: "CloudBase",
+    location: "Hyderabad",
+    type: "Full-time",
+    salary: "$95k–$115k",
+    tags: ["AWS", "Docker", "CI/CD"],
+    posted: "4 days ago",
+  },
+];

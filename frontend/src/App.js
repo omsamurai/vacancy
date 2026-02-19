@@ -1,15 +1,15 @@
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
+import Jobs from "./pages/Jobs";
 
 function App() {
   const [page, setPage] = useState("Home");
 
-  // This function will render the correct page
-  // We'll keep adding pages here as we build them
   function renderPage() {
     switch (page) {
       case "Home": return <Home setPage={setPage} />;
+      case "Jobs": return <Jobs />;
       default:     return <Home setPage={setPage} />;
     }
   }
