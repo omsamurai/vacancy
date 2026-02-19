@@ -42,10 +42,10 @@ mongoose
 // We will create these files in the next steps
 // ─────────────────────────────────────────
 
-//const jobRoutes  = require("./routes/jobs");
+const jobRoutes  = require("./routes/jobs");
 //const blogRoutes = require("./routes/blogs");
 
-//app.use("/api/jobs",  jobRoutes);   // All job routes → /api/jobs
+app.use("/api/jobs",  jobRoutes);   // All job routes → /api/jobs
 //app.use("/api/blogs", blogRoutes);  // All blog routes → /api/blogs
 
 // ─────────────────────────────────────────
