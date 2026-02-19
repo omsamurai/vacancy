@@ -1,21 +1,23 @@
 import { useState } from "react";
 import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
 
 function App() {
-
-  // This controls which page is currently shown
-  // We'll use this to render different pages later
   const [page, setPage] = useState("Home");
 
-  return (
-    <div>
-      {/* Navbar is always visible on every page */}
-      <Navbar page={page} setPage={setPage} />
+  // This function will render the correct page
+  // We'll keep adding pages here as we build them
+  function renderPage() {
+    switch (page) {
+      case "Home": return <Home setPage={setPage} />;
+      default:     return <Home setPage={setPage} />;
+    }
+  }
 
-      {/* Temporary — just to confirm clicking nav works */}
-      <h2 style={{ padding: "40px", color: "#888" }}>
-        Current Page: {page}
-      </h2>
+  return (
+    <div style={{ background: "#f8f7f4", minHeight: "100vh" }}>
+      <Navbar page={page} setPage={setPage} />
+      <main>{renderPage()}</main>
     </div>
   );
 }
