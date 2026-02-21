@@ -1,51 +1,86 @@
 import { useState } from "react";
 
-// JobCard receives a single job object as a prop
-// and displays it as a card
 function JobCard({ job }) {
+  const [saved, setSaved]       = useState(false);
+  const [hovered, setHovered]   = useState(false);
+  const [applied, setApplied]   = useState(false);
 
-  // Track if this job is saved/bookmarked
-  const [saved, setSaved] = useState(false);
+  function getBadgeStyle(type) {
+    if (type === "Full-time")  return { bg: "#dcfce7", color: "#16a34a" };
+    if (type === "Contract")   return { bg: "#fef3c7", color: "#d97706" };
+    if (type === "Part-time")  return { bg: "#dbeafe", color: "#2563eb" };
+    if (type === "Internship") return { bg: "#fce7f3", color: "#db2777" };
+    return { bg: "#f1f5f9", color: "#475569" };
+  }
+
+  const badge = getBadgeStyle(job.type);
 
   return (
-    <div style={styles.card}>
+    <div
+      style={{
+        ...styles.card,
+        boxShadow: hovered
+          ? "0 16px 40px rgba(0,0,0,0.1)"
+          : "0 2px 8px rgba(0,0,0,0.04)",
+        transform: hovered ? "translateY(-5px)" : "none",
+        border: hovered
+          ? "1px solid #f97316"
+          : "1px solid #e2e8f0",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
 
-      {/* TOP ROW — title, company, job type badge */}
-      <div style={styles.topRow}>
-        <div>
-          <div style={styles.title}>{job.title}</div>
-          <div style={styles.company}>{job.company}</div>
+      {/* TOP — title, company, badge */}
+      <div style={styles.top}>
+        <div style={styles.companyLogoBox}>
+          {job.company?.charAt(0).toUpperCase()}
         </div>
-        <span style={styles.badge(job.type)}>{job.type}</span>
+        <div style={styles.topRight}>
+          <span style={{ ...styles.badge, background: badge.bg, color: badge.color }}>
+            {job.type}
+          </span>
+        </div>
       </div>
 
-      {/* META — location and posted date */}
+      <h3 style={styles.jobTitle}>{job.title}</h3>
+      <div style={styles.company}>{job.company}</div>
+
+      {/* META */}
       <div style={styles.meta}>
-        <span>📍 {job.location}</span>
-        <span>🕒 {job.posted}</span>
+        <span style={styles.metaItem}>📍 {job.location}</span>
+        <span style={styles.metaDot}>·</span>
+        <span style={styles.metaItem}>🕒 {job.posted || "Recently"}</span>
       </div>
 
-      {/* TAGS — skills required */}
+      {/* TAGS */}
       <div style={styles.tags}>
-        {job.tags.map(tag => (
+        {job.tags?.slice(0, 3).map(tag => (
           <span key={tag} style={styles.tag}>{tag}</span>
         ))}
       </div>
 
-      {/* FOOTER — salary and action buttons */}
+      {/* FOOTER */}
       <div style={styles.footer}>
-        <span style={styles.salary}>{job.salary}</span>
-        <div style={styles.btnRow}>
-
-          {/* Save button toggles between saved and unsaved */}
+        <div style={styles.salary}>
+          <span style={styles.salaryLabel}>Salary</span>
+          <span style={styles.salaryValue}>{job.salary || "Negotiable"}</span>
+        </div>
+        <div style={styles.btnGroup}>
           <button
-            onClick={() => setSaved(s => !s)}
+            onClick={(e) => { e.stopPropagation(); setSaved(s => !s); }}
             style={styles.saveBtn(saved)}
+            title={saved ? "Unsave" : "Save job"}
           >
-            {saved ? "★ Saved" : "☆ Save"}
+            {saved ? "★" : "☆"}
           </button>
-
-          <button style={styles.applyBtn}>Apply</button>
+          <button
+            onClick={() => setApplied(true)}
+            style={styles.applyBtn(applied)}
+            disabled={applied}
+          >
+            {applied ? "✓ Applied" : "Apply Now"}
+          </button>
         </div>
       </div>
 
@@ -53,107 +88,153 @@ function JobCard({ job }) {
   );
 }
 
-// ─────────────────────────────────────────
-// STYLES
-// ─────────────────────────────────────────
 const styles = {
   card: {
     background: "#ffffff",
-    borderRadius: "16px",
+    borderRadius: "18px",
     padding: "24px",
-    border: "1px solid #e8e4de",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+    transition: "all 0.25s ease",
+    cursor: "pointer",
+    height: "100%",
+    boxSizing: "border-box",
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
   },
-  topRow: {
+  top: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: "12px",
+    marginBottom: "14px",
   },
-  title: {
+  companyLogoBox: {
+    width: "44px",
+    height: "44px",
+    borderRadius: "12px",
+    background: "linear-gradient(135deg, #0f172a, #1e293b)",
+    color: "#ffffff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: 800,
+    fontSize: "18px",
+  },
+  topRight: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+  },
+  badge: {
+    padding: "4px 10px",
+    borderRadius: "20px",
+    fontSize: "11px",
+    fontWeight: 700,
+    letterSpacing: "0.3px",
+  },
+  jobTitle: {
     fontSize: "17px",
     fontWeight: 700,
-    color: "#1a1a2e",
+    color: "#0f172a",
+    marginBottom: "4px",
+    lineHeight: 1.3,
   },
   company: {
     color: "#f97316",
     fontWeight: 600,
     fontSize: "14px",
-    marginTop: "2px",
+    marginBottom: "12px",
   },
-
-  // Badge color changes based on job type
-  badge: (type) => ({
-    padding: "3px 10px",
-    borderRadius: "20px",
-    fontSize: "12px",
-    fontWeight: 600,
-    background:
-      type === "Full-time" ? "#dcfce7" :
-      type === "Contract"  ? "#fef3c7" : "#dbeafe",
-    color:
-      type === "Full-time" ? "#16a34a" :
-      type === "Contract"  ? "#d97706" : "#2563eb",
-  }),
-
   meta: {
     display: "flex",
-    gap: "16px",
-    color: "#888888",
+    alignItems: "center",
+    gap: "6px",
+    marginBottom: "14px",
+    flexWrap: "wrap",
+  },
+  metaItem: {
     fontSize: "13px",
-    margin: "12px 0",
+    color: "#64748b",
+  },
+  metaDot: {
+    color: "#cbd5e1",
+    fontSize: "13px",
   },
   tags: {
     display: "flex",
     flexWrap: "wrap",
     gap: "6px",
-    marginTop: "12px",
+    marginBottom: "18px",
+    flex: 1,
   },
   tag: {
     padding: "4px 10px",
-    background: "#f1f0ec",
+    background: "#f8fafc",
+    border: "1px solid #e2e8f0",
     borderRadius: "6px",
     fontSize: "12px",
     fontWeight: 600,
-    color: "#555555",
+    color: "#475569",
   },
   footer: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: "16px",
     paddingTop: "16px",
-    borderTop: "1px solid #f0ece6",
+    borderTop: "1px solid #f1f5f9",
+    marginTop: "auto",
   },
   salary: {
-    fontWeight: 700,
-    color: "#1a1a2e",
-    fontSize: "15px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "2px",
   },
-  btnRow: {
+  salaryLabel: {
+    fontSize: "11px",
+    color: "#94a3b8",
+    fontWeight: 600,
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+  },
+  salaryValue: {
+    fontSize: "15px",
+    fontWeight: 800,
+    color: "#0f172a",
+  },
+  btnGroup: {
     display: "flex",
     gap: "8px",
+    alignItems: "center",
   },
   saveBtn: (saved) => ({
-    padding: "8px 14px",
-    borderRadius: "8px",
-    border: "none",
+    width: "36px",
+    height: "36px",
+    borderRadius: "10px",
+    border: `1px solid ${saved ? "#f97316" : "#e2e8f0"}`,
+    background: saved ? "#fff7ed" : "#ffffff",
+    color: saved ? "#f97316" : "#94a3b8",
     cursor: "pointer",
-    fontWeight: 600,
-    fontSize: "13px",
-    background: saved ? "#f97316" : "#f1f0ec",
-    color: saved ? "#ffffff" : "#555555",
+    fontSize: "18px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all 0.2s",
+    fontFamily: "Poppins, sans-serif",
   }),
-  applyBtn: {
-    padding: "8px 18px",
-    background: "#1a1a2e",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: "8px",
-    fontWeight: 600,
-    cursor: "pointer",
+  applyBtn: (applied) => ({
+    padding: "9px 18px",
+    background: applied
+      ? "#f0fdf4"
+      : "linear-gradient(135deg, #f97316, #ea580c)",
+    color: applied ? "#16a34a" : "#ffffff",
+    border: applied ? "1px solid #bbf7d0" : "none",
+    borderRadius: "10px",
+    fontWeight: 700,
     fontSize: "13px",
-  },
+    cursor: applied ? "default" : "pointer",
+    fontFamily: "Poppins, sans-serif",
+    transition: "all 0.2s",
+    whiteSpace: "nowrap",
+  }),
 };
 
 export default JobCard;
